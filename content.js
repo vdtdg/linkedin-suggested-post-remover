@@ -25,8 +25,8 @@ function removeSuggestedPosts() {
       .forEach((post) => {
         const label = post.querySelector(".update-components-header__text-view");
         if (label && suggestedLabels.includes(label.textContent.trim().toLowerCase())) {
-          // post.closest('[data-id^="urn:li:activity:"]').remove();
-          post.style.border = '2px solid red';
+          post.closest('[data-id^="urn:li:activity:"]').remove();
+          // post.style.border = '2px solid red';
         }
       });
   }
@@ -35,10 +35,7 @@ function removeSuggestedPosts() {
 function observePageChanges() {
   setInterval(() => {
     if (window.location.href.includes("/feed")) {
-      const button = document.querySelector(buttonSelector);
-      if (!button) {
-        removeSuggestedPosts();
-      }
+      removeSuggestedPosts();
     }
   }, 500);
 }
