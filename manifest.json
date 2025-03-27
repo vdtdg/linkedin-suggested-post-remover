@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LinkedIn Suggested Posts Remover",
-  "version": "1.0.3",
+  "version": "1.0.0",
   "description": "Remove the annoying suggested posts from LinkedIn.",
   "permissions": [],
   "icons": {
