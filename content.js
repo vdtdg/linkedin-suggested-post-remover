@@ -1,70 +1,34 @@
 const feedSelector = 'div[data-finite-scroll-hotkey-context="FEED"]';
-const feedFollowSelector = ".feed-follows-module";
-const buttonId = "unlock-button";
-const buttonSelector = `#${buttonId}`;
-const lockTime = 2700; // in milliseconds
+const suggestedLabels = [
+  "suggested",
+  "sugerido",
+  "suggerito",
+  "vorgeschlagen",
+  "suggéré",
+  "предложено",
+  "aanbevolen",
+  "推薦",
+  "推荐",
+  "提案された",
+  "추천",
+  "önerilen",
+  "suggerert",
+  "foreslået",
+  "ehdotettu",
+];
 
-function unlockFeed() {
-  const feed = document.querySelector(feedSelector);
-  const feedFollow = document.querySelector(feedFollowSelector);
-  const button = document.querySelector(buttonSelector);
-
-  feed.style.visibility = "visible";
-  feedFollow.style.visibility = "visible";
-  button.style.display = "none";
-}
-
-function setupUnlockButton() {
+function removeSuggestedPosts() {
   const feed = document.querySelector(feedSelector);
 
   if (feed) {
-    const button = document.createElement("button");
-    button.setAttribute("id", buttonId);
-    button.textContent = "Feed locked. Press to unlock.";
-    button.classList.add("artdeco-card");
-    button.classList.add("t-black");
-    button.classList.add("t-16");
-    button.classList.add("t-bold");
-    feed.before(button);
-
-    const progress = document.createElement("progress");
-    progress.setAttribute("id", "progress-bar");
-    progress.setAttribute("max", "100");
-    progress.setAttribute("value", "0");
-
-    let pressTimer;
-    let interval;
-
-    function startProgress(event) {
-      if (event.button === 1 || event.button === 2) { // right or middle click
-        return;
-      }
-      button.textContent = "";
-      button.appendChild(progress);
-      progress.value = 0;
-      interval = setInterval(() => {
-        progress.value++;
-        if (progress.value >= 100) {
-          unlockFeed();
-          clearInterval(interval);
+    feed.querySelectorAll('[data-view-name="feed-full-update"]')
+      .forEach((post) => {
+        const label = post.querySelector(".update-components-header__text-view");
+        if (label && suggestedLabels.includes(label.textContent.trim().toLowerCase())) {
+          // post.closest('[data-id^="urn:li:activity:"]').remove();
+          post.style.border = '2px solid red';
         }
-      }, lockTime / 100);
-    }
-
-    function stopProgress() {
-      clearTimeout(pressTimer);
-      clearInterval(interval);
-      button.textContent = "Feed locked. Press to unlock.";
-      progress.value = 0;
-    }
-
-    // Mouse based device
-    button.addEventListener("mousedown", startProgress);
-    document.addEventListener("mouseup", stopProgress);
-
-    // Touch based device
-    button.addEventListener("touchstart", startProgress);
-    document.addEventListener("touchend", stopProgress);
+      });
   }
 }
 
@@ -73,11 +37,11 @@ function observePageChanges() {
     if (window.location.href.includes("/feed")) {
       const button = document.querySelector(buttonSelector);
       if (!button) {
-        setupUnlockButton();
+        removeSuggestedPosts();
       }
     }
   }, 500);
 }
 
-document.addEventListener("DOMContentLoaded", setupUnlockButton);
+document.addEventListener("DOMContentLoaded", removeSuggestedPosts);
 document.addEventListener("DOMContentLoaded", observePageChanges);
