@@ -1,4 +1,3 @@
-const feedSelector = 'div[data-finite-scroll-hotkey-context="FEED"]';
 const suggestedLabels = [
   "suggested",
   "sugerido",
@@ -18,15 +17,23 @@ const suggestedLabels = [
 ];
 
 function removeSuggestedPosts() {
-  const feed = document.querySelector(feedSelector);
+  const feed = document.querySelector("main");
 
   if (feed) {
-    feed.querySelectorAll('[data-view-name="feed-full-update"]')
+    feed.querySelectorAll('div[data-id], div[role="listitem"]')
       .forEach((post) => {
-        const label = post.querySelector(".update-components-header__text-view");
-        if (label && suggestedLabels.includes(label.textContent.trim().toLowerCase())) {
-          post.closest('[data-id^="urn:li:activity:"]').remove();
-          // post.style.border = '2px solid red';
+
+        // Find all <p> tags inside this specific post
+        const paragraphs = post.querySelectorAll('p');
+
+        // Check if ANY <p> tag contains ONLY the suggested word (exact match)
+        const isSuggested = Array.from(paragraphs).some(p =>
+          suggestedLabels.includes(p.innerText.trim().toLowerCase())
+        );
+
+        if (isSuggested) {
+          post.style.display = 'none';
+          post.remove();
         }
       });
   }
@@ -34,9 +41,7 @@ function removeSuggestedPosts() {
 
 function observePageChanges() {
   setInterval(() => {
-    if (window.location.href.includes("/feed")) {
-      removeSuggestedPosts();
-    }
+    removeSuggestedPosts();
   }, 500);
 }
 
