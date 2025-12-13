@@ -23,15 +23,14 @@ function removeSuggestedPosts() {
     feed.querySelectorAll('div[data-id], div[role="listitem"]')
       .forEach((post) => {
 
-        // Find all <p> tags inside this specific post
-        const paragraphs = post.querySelectorAll('p');
+        // Find all <div> tags inside this specific post
+        const divs = [...post.querySelectorAll('div')]
 
-        // Check if ANY <p> tag contains ONLY the suggested word (exact match)
-        const isSuggested = Array.from(paragraphs).some(p =>
-          suggestedLabels.includes(p.innerText.trim().toLowerCase())
-        );
+        // Check if ANY <div> tag contains ONLY the suggested word (exact match)
+        const isSuggested = divs.some(el => suggestedLabels.includes(el.innerText.trim().toLowerCase()))
 
         if (isSuggested) {
+          console.log(`1 post was removed from the feed (suggested post)`)
           post.style.display = 'none';
           post.remove();
         }
